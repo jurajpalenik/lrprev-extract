@@ -44,8 +44,16 @@ def get_original_file_path(db_path, uuid):
         conn.close()
         if result:
             uuid, absolutePath, pathFromRoot, baseName = result
+            
             # Remove first slash from the absolutePath
-            full_path = Path(absolutePath[1:] + pathFromRoot)
+            if absolutePath[:1] == '\\' or absolutePath[:1] == '/':
+                absolutePath = absolutePath[1:] 
+            # Remove disk path in win
+            if absolutePath[1:3] == ':\\' or absolutePath[1:3] == ':/':
+                absolutePath = absolutePath[3:] 
+                
+            full_path = Path(absolutePath + pathFromRoot)
+
             return full_path, baseName
         else:
             print(f"No entry found for UUID: {uuid}")
